@@ -1,1 +1,2 @@
 ## How to develop your own crypto trading bot
+The complete tutorial is available at this address [https://cassandre.gitbook.io/crypto-trading-bot-tutorial/](https://cassandre.gitbook.io/crypto-trading-bot-tutorial/)
