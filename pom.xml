@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>tech.cassandre.trading.bot</groupId>
 			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Tests -->
@@ -56,6 +56,11 @@
 			<artifactId>awaitility</artifactId>
 			<version>4.0.2</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>tech.cassandre.trading.bot</groupId>
+			<artifactId>cassandre-trading-bot-spring-boot-starter-test</artifactId>
+			<version>2.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<!-- =========================================================================================================== -->

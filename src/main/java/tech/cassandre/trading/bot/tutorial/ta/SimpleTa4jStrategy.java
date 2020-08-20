@@ -6,21 +6,17 @@ import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
-
-import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.time.Duration;
 
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
@@ -43,6 +39,11 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 	}
 
 	@Override
+	public Duration getDelayBetweenTwoBars() {
+		return Duration.ofDays(1);
+	}
+
+	@Override
 	public Strategy getStrategy() {
 		ClosePriceIndicator closePrice = new ClosePriceIndicator(getSeries());
 		SMAIndicator sma = new SMAIndicator(closePrice, getMaximumBarCount());
@@ -50,22 +51,30 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 	}
 
 	@Override
+	public void onPositionUpdate(PositionDTO position) {
+		if (position.getStatus().equals(OPENED)) {
+			System.out.println("Position opened at " + position.getOpenTrade().getPrice());
+		}
+		if (position.getStatus().equals(CLOSED)) {
+			System.out.println("Position closed with a gain of  " + position.getPositionGain().getAmount());
+		}
+	}
+
+	@Override
 	public void shouldEnter() {
-		System.out.println("Enter signal at received " + getSeries().getLastBar().getSimpleDateName());
-		// Create rule.
+		// Create rules.
 		PositionRulesDTO rules = PositionRulesDTO.builder()
 				.stopGainPercentage(10)
 				.stopLossPercentage(5)
 				.create();
 		// Create position.
 		getPositionService().createPosition(new CurrencyPairDTO(BTC, USDT),
-				new BigDecimal("0,001"),
+				new BigDecimal("0.01"),
 				rules);
 	}
 
 	@Override
 	public void shouldExit() {
-		System.out.println("Exit signal at " + getSeries().getLastBar().getClosePrice());
 	}
 
 }
