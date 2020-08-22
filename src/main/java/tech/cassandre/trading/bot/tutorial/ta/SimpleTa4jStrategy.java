@@ -53,16 +53,19 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
 	@Override
 	public void onTickerUpdate(TickerDTO ticker) {
+		// Display all received tickers
 		System.out.println("New ticker " + ticker);
 	}
 
 	@Override
 	public void onPositionUpdate(PositionDTO position) {
+		// Display the position number when a ticker has been opened.
 		if (position.getStatus().equals(OPENED)) {
-			System.out.println("> Position " + position.getId() + " opened");
+			System.out.println(" > Position " + position.getId() + " opened");
 		}
+		// Display the position number and gain when it's closed.
 		if (position.getStatus().equals(CLOSED)) {
-			System.out.println(">> Position " + position.getId() + " closed - gain : " + position.getPositionGain().getAmount());
+			System.out.println(" >> Position " + position.getId() + " closed - gain : " + position.getPositionGain().getAmount());
 		}
 	}
 
@@ -74,8 +77,9 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 				.stopLossPercentage(10)
 				.create();
 		// Create position.
-		getPositionService().createPosition(new CurrencyPairDTO(BTC, USDT),
-				new BigDecimal("10"),
+		getPositionService().createPosition(
+				new CurrencyPairDTO(BTC, USDT),
+				new BigDecimal("0.1"),
 				rules);
 	}
 

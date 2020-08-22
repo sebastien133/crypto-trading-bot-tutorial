@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 
 import java.math.BigDecimal;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 
 /**
  * Basic Ta4j strategy test.
@@ -35,17 +36,19 @@ public class SimpleTa4jStrategyTest {
         final BigDecimal gains = strategy.getPositions()
                 .values()
                 .stream()
-                .filter(p -> p.getStatus().equals(PositionStatusDTO.CLOSED))
+                .filter(p -> p.getStatus().equals(CLOSED))
                 .map(p -> p.getPositionGain().getAmount().getValue())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         System.out.println("Cumulated gains > " + gains);
+        assertTrue(gains.compareTo(BigDecimal.ZERO) > 0);
+
         System.out.println("Position still opened :");
         strategy.getPositions()
                 .values()
                 .stream()
-                .filter(p -> p.getStatus().equals(PositionStatusDTO.OPENED))
-                .forEach(positionDTO -> System.out.println(" - " + positionDTO.getId()));
+                .filter(p -> p.getStatus().equals(OPENED))
+                .forEach(p -> System.out.println(" - " + p.getId()));
     }
 
 }
