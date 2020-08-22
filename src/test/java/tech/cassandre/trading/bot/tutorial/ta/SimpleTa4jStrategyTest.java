@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 import java.math.BigDecimal;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Basic Ta4j strategy test.
@@ -38,7 +39,13 @@ public class SimpleTa4jStrategyTest {
                 .map(p -> p.getPositionGain().getAmount().getValue())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        System.out.println("> " + gains);
+        System.out.println("Cumulated gains > " + gains);
+        System.out.println("Position still opened :");
+        strategy.getPositions()
+                .values()
+                .stream()
+                .filter(p -> p.getStatus().equals(PositionStatusDTO.OPENED))
+                .forEach(positionDTO -> System.out.println(" - " + positionDTO.getId()));
     }
 
 }

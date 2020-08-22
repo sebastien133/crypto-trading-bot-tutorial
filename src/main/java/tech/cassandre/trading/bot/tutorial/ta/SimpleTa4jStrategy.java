@@ -6,6 +6,7 @@ import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
@@ -47,16 +48,21 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 	public Strategy getStrategy() {
 		ClosePriceIndicator closePrice = new ClosePriceIndicator(getSeries());
 		SMAIndicator sma = new SMAIndicator(closePrice, getMaximumBarCount());
-		return new BaseStrategy(new UnderIndicatorRule(sma, closePrice), new OverIndicatorRule(sma, closePrice));
+		return new BaseStrategy(new OverIndicatorRule(sma, closePrice), new UnderIndicatorRule(sma, closePrice));
+	}
+
+	@Override
+	public void onTickerUpdate(TickerDTO ticker) {
+		System.out.println("New ticker " + ticker);
 	}
 
 	@Override
 	public void onPositionUpdate(PositionDTO position) {
 		if (position.getStatus().equals(OPENED)) {
-			System.out.println("Position opened at " + position.getOpenTrade().getPrice());
+			System.out.println("> Position " + position.getId() + " opened");
 		}
 		if (position.getStatus().equals(CLOSED)) {
-			System.out.println("Position closed with a gain of  " + position.getPositionGain().getAmount());
+			System.out.println(">> Position " + position.getId() + " closed - gain : " + position.getPositionGain().getAmount());
 		}
 	}
 
@@ -64,12 +70,12 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 	public void shouldEnter() {
 		// Create rules.
 		PositionRulesDTO rules = PositionRulesDTO.builder()
-				.stopGainPercentage(10)
-				.stopLossPercentage(5)
+				.stopGainPercentage(5)
+				.stopLossPercentage(10)
 				.create();
 		// Create position.
 		getPositionService().createPosition(new CurrencyPairDTO(BTC, USDT),
-				new BigDecimal("0.01"),
+				new BigDecimal("10"),
 				rules);
 	}
 
