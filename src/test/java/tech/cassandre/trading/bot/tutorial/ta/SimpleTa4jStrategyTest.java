@@ -37,7 +37,7 @@ public class SimpleTa4jStrategyTest {
                 .values()
                 .stream()
                 .filter(p -> p.getStatus().equals(CLOSED))
-                .map(p -> p.getPositionGain().getAmount().getValue())
+                .map(p -> p.getGain().getAmount().getValue())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         System.out.println("Cumulated gains > " + gains);

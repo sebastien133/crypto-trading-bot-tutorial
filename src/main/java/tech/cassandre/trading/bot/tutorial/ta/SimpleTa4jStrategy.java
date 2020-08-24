@@ -65,7 +65,7 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 		}
 		// Display the position number and gain when it's closed.
 		if (position.getStatus().equals(CLOSED)) {
-			System.out.println(" >> Position " + position.getId() + " closed - gain : " + position.getPositionGain().getAmount());
+			System.out.println(" >> Position " + position.getId() + " closed - gain : " + position.getGain().getAmount());
 		}
 	}
 
